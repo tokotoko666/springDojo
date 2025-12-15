@@ -3,3 +3,7 @@ spring:
     url: "jdbc:mysql://localhost:3306/apidb"
     username: "apiuser"
     password: "apipass"
+logging:
+  level:
+    com.example.blog.repository: DEBUG
+    org.springframework.security: Trace
