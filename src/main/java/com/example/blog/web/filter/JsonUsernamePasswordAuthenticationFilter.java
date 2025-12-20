@@ -16,11 +16,15 @@ import java.io.IOException;
 
 public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private final ObjectMapper objectMapper;
+
     public JsonUsernamePasswordAuthenticationFilter(
             SecurityContextRepository securityContextRepository,
             SessionAuthenticationStrategy sessionAuthenticationStrategy,
-            AuthenticationManager authenticationManager) {
+            AuthenticationManager authenticationManager,
+            ObjectMapper objectMapper) {
         super();
+        this.objectMapper = objectMapper;
         setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
         setSecurityContextRepository(securityContextRepository);
         setAuthenticationManager(authenticationManager);
@@ -34,9 +38,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        var objectMapper = new ObjectMapper();
         LoginRequest jsonRequest;
-
         try {
             jsonRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
         } catch (IOException e) {
