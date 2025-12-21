@@ -1,5 +1,6 @@
 package com.example.blog.repository.user;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -17,4 +18,10 @@ public interface UserRepository {
             WHERE u.username = #{username}
             """)
     Optional<UserRecord> selectByUsername(String username);
+
+    @Insert("""
+            INSERT INTO users(username, password, enabled)
+            VALUES(#{username}, #{password}, #{enabled})
+            """)
+    void insert(String username, String password, boolean enabled);
 }
