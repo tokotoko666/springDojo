@@ -1,12 +1,14 @@
 package com.example.blog.service.article;
 
 import com.example.blog.repository.article.ArticleRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,5 +38,32 @@ class ArticleServiceMockTest {
                     assertThat(articleEntity.id()).isEqualTo(999L);
                 });
         assertThat(articleRepository.selectById(111L)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findById: 指定された ID の記事が存在するとき、ArticleEntity を返す")
+    public void findById_returnArticleEntity() {
+        // ## Arrange ##
+        when(articleRepository.selectById(999L)).thenReturn(Optional.of(
+                new ArticleEntity(
+                        999L,
+                        "title_999",
+                        "body_999",
+                        LocalDateTime.of(2022, 1, 1, 10, 0, 0),
+                        LocalDateTime.of(2022, 2, 1, 11, 0, 0)
+                        )
+        ));
+        // ## Act ##
+        var actual = cut.findById(999L);
+
+        // ## Assert ##
+        assertThat(actual).isPresent()
+                .hasValueSatisfying(articleEntity -> {
+                    assertThat(articleEntity.id()).isEqualTo(999L);
+                    assertThat(articleEntity.title()).isEqualTo("title_999");
+                    assertThat(articleEntity.content()).isEqualTo("body_999");
+                    assertThat(articleEntity.createdAt()).isEqualTo("2022-01-01T10:00:00");
+                    assertThat(articleEntity.updatedAt()).isEqualTo("2022-02-01T11:00:00");
+                });
     }
 }
