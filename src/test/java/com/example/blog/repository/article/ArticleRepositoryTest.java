@@ -44,4 +44,16 @@ class ArticleRepositoryTest {
                     assertThat(articleEntity.updatedAt()).isEqualTo("2010-11-01T00:00:00");
                 });
     }
+
+    @Test
+    @DisplayName("selectById: 指定されたIDの記事が存在しないとき、Optional.empty を返す")
+    public void selectById_returnEmpty() {
+        // ## Arrange ##
+
+        // ## Act ##
+        var actual = cut.selectById(-999L);
+
+        // ## Assert ##
+        assertThat(actual).isEmpty();
+    }
 }
