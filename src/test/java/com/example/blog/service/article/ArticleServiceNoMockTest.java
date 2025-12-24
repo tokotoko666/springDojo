@@ -45,4 +45,16 @@ class ArticleServiceNoMockTest {
                     assertThat(articleEntity.updatedAt()).isEqualTo("2022-02-01T11:00:00");
                 });
     }
+
+    @Test
+    @DisplayName("findById: 指定された ID の記事が存在しないとき、Optional.Empty を返す")
+    public void findById_returnEmpty() {
+        // ## Arrange ##
+
+        // ## Act ##
+        var actual = cut.findById(-999L);
+
+        // ## Assert ##
+        assertThat(actual).isEmpty();
+    }
 }
