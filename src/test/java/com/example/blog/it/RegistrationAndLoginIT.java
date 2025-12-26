@@ -39,7 +39,7 @@ public class RegistrationAndLoginIT {
     @Test
     void integrationTest() {
         // ユーザー作成
-        var xsrfToken = getRoot();
+        var xsrfToken = getCsrfCookie();
         register(xsrfToken);
 
         //ログイン失敗
@@ -67,11 +67,11 @@ public class RegistrationAndLoginIT {
         //→ レスポンスに Set-Cookie: JSESSIONID が返ってくる
     }
 
-    private String getRoot() {
+    private String getCsrfCookie() {
         // ## Arrange ##
 
         // ## Act ##
-        var responseSpec = webTestClient.get().uri("/").exchange();
+        var responseSpec = webTestClient.get().uri("/csrf-cookie").exchange();
 
         // ## Assert ##
         var response = responseSpec.returnResult(String.class);
