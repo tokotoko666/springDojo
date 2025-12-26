@@ -1,6 +1,7 @@
 package com.example.blog.web.controller;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,18 +17,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class CSRFCookieRestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Nested
+    class return_204 {
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Test
-    @DisplayName("GET /csrf-cookie: 204 を返し、Set-Cookie ヘッダに XSRF-TOKEN が含まれている")
-    void return204() throws Exception {
-        // ## Arrange ##
+        @Test
+        @DisplayName("GET /csrf-cookie: 204 を返し、Set-Cookie ヘッダに XSRF-TOKEN が含まれている")
+        void return204() throws Exception {
+            // ## Arrange ##
 
-        // ## Act ##
-        var result = mockMvc.perform(get("/csrf-cookie"));
+            // ## Act ##
+            var result = mockMvc.perform(get("/csrf-cookie"));
 
-        // ## Assert ##
-        result.andExpect(status().isNoContent()).andExpect(header().string("Set-Cookie", containsString("XSRF-TOKEN")));
+            // ## Assert ##
+            result.andExpect(status().isNoContent()).andExpect(header().string("Set-Cookie", containsString("XSRF-TOKEN")));
+        }
     }
 }
