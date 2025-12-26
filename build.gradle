@@ -78,3 +78,5 @@ openApiGenerate {
 	configOptions.put("useSpringBoot3", "true")
 	configOptions.put("documentationProvider", "none")
 }
+
+sourceSets.main.java.srcDir "${openApiGeneratedCodePath}/src/main/java"
