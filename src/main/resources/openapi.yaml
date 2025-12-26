@@ -31,6 +31,11 @@ paths:
           content: { }
         '500':
           $ref: "#/components/responses/InternalServerResponse"
+  /users:
+    post:
+      responses:
+        '201':
+          description: Created
 components:
   schemas:
     InternalServerError:
