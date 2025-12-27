@@ -13,7 +13,8 @@ public interface UserRepository {
 
     @Select("""
             SELECT
-                u.username
+                u.id
+              , u.username
               , u.password
               , u.enabled
             FROM users u
