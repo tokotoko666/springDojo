@@ -10,9 +10,11 @@ VALUES('タイトルです1', '1本文です。')
 
 DELETE FROM users;
 
+ALTER TABLE users AUTO_INCREMENT = 1;
+
 -- password is "password" for all users
-INSERT INTO users(username, password, enabled)
-VALUES('user1', '$2a$10$95AbqrwMKrDXGUe5I1/ee.gTgrdd8yKfbeQZvXZA7PVck2biuzFwC', true)
-     ,('user2', '$2a$10$Ke2AAiwaMjEGDEdudTm90.qR2fRDYgVykz2gYfqmEo.7NwFjKtqIi', true)
-     ,('user3', '$2a$10$ERsOkyCWnu/7GYkbvTm0LOer3/DGghA8socx2bUGiiHmwZkKtkwey', true)
+INSERT INTO users(id, username, password, enabled)
+VALUES(1, 'user1', '$2a$10$tv/w2Tu0zDRfuUVmYv8cxupXUFVDfDa9qeZHI7D6FLSbgbtW2X1wu', true)
+     ,(2, 'user2', '$2a$10$aY2.7pBbLa43eAM6THhBbejLQ05Gse0pFhAJdUh5IMofzRDUjFqXC', true)
+     ,(3, 'user3', '$2a$10$80.pbgR30h2i94ZaN.pbHuQ2.Su/mIpCSJ8iUXqTRXGsob99r6Lri', true)
 ;
