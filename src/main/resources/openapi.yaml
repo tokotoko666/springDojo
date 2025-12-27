@@ -32,7 +32,7 @@ paths:
                 example: XSRF-TOKEN=4ee8188f-2873-46cb-937f-7464ebf143e7; Path=/
           content: { }
         '500':
-          $ref: "#/components/responses/InternalServerResponse"
+          $ref: "#/components/responses/InternalServerErrorResponse"
   /users:
     post:
       description: ユーザーを登録します
@@ -56,8 +56,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserDTO"
+        '400':
+          $ref: "#/components/responses/BadRequestResponse"
 components:
   schemas:
+    BadRequest:
+      description: >
+        リクエストの内容が不正な場合のエラーレスポンス。
+        クライアントはエラーの内容を確認してリクエストを修正する必要があります。
+        [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) に準拠しています。
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+          default: 400
+          example: 400
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+          example: /users
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              pointer:
+                description: エラーが発生したリクエストパラメーターの JSON ポインター
+                type: string
+                example: "#/username"
+              detail:
+                description: エラーの詳細
+                type: string
+                example: "ユーザー名は3文字以上32文字以内で入力してください"
     InternalServerError:
       type: object
       properties:
@@ -108,7 +146,13 @@ components:
           type: string
           example: username123
   responses:
-    InternalServerResponse:
+    BadRequestResponse:
+      description: BadRequest
+      content:
+        application/probrem+json:
+          schema:
+            $ref: "#/components/schemas/BadRequest"
+    InternalServerErrorResponse:
       description: InternalServerError
       content:
         application/problem+json:
