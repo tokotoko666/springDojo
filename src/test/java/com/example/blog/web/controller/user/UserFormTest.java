@@ -37,5 +37,6 @@ class UserFormTest {
 
         // ## Assert ##
         assertThat(actual).isNotEmpty();
+        assertThat(actual).anyMatch(violation -> violation.getPropertyPath().toString().equals("username"));
     }
 }
