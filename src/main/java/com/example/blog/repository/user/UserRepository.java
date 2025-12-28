@@ -1,10 +1,7 @@
 package com.example.blog.repository.user;
 
 import com.example.blog.service.user.UserEntity;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.Optional;
 
@@ -31,7 +28,8 @@ public interface UserRepository {
             INSERT INTO users(username, password, enabled)
             VALUES(#{username}, #{password}, #{enabled})
             """)
-    void insert(String username, String password, boolean enabled);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void insert(UserEntity entity);
 
     @Delete("""
             DELETE FROM users u

@@ -18,9 +18,9 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.selectByUsername(username)
                 .map(r -> User.builder()
-                        .username(r.username())
-                        .password(r.password())
-                        .disabled(!r.enabled())
+                        .username(r.getUsername())
+                        .password(r.getPassword())
+                        .disabled(!r.isEnabled())
                         .build()
                 ).orElseThrow(() -> new UsernameNotFoundException("given username is not found: username = " + username));
     }
