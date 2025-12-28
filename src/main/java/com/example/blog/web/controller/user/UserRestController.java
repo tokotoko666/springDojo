@@ -23,6 +23,6 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody UserForm userform) {
         userService.register(userform.username(), userform.password());
-        return ResponseEntity.created(URI.create("/users/me")).build();
+        return ResponseEntity.created(URI.create("/users/123")).build();
     }
 }
