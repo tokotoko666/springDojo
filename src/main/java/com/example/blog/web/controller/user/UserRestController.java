@@ -2,6 +2,7 @@ package com.example.blog.web.controller.user;
 
 import com.example.blog.api.UsersApi;
 import com.example.blog.model.BadRequest;
+import com.example.blog.model.ErrorDetail;
 import com.example.blog.model.UserDTO;
 import com.example.blog.model.UserForm;
 import com.example.blog.service.user.UserService;
@@ -53,6 +54,19 @@ public class UserRestController implements UsersApi {
     public ResponseEntity<BadRequest> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         var body = new BadRequest();
         BeanUtils.copyProperties(e.getBody(), body);
+
+        var errorDetailList = e.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fieldError -> {
+                    var pointer = "#/" + fieldError.getField();
+                    var detail = fieldError.getCode();
+                    var errorDetail = new ErrorDetail();
+                    errorDetail.setPointer(pointer);
+                    errorDetail.setDetail(detail);
+                    return errorDetail;
+                }).toList();
+
+        body.setErrors(errorDetailList);
         return ResponseEntity.badRequest().body(body);
     }
 }
