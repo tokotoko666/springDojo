@@ -50,4 +50,20 @@ class UserServiceTest {
                     .isTrue();
         });
     }
+
+    @Test
+    @DisplayName("existsUsername: ユーザー名がすでに登録済みのとき true")
+    void existsUsername_returnTrue() {
+        // ## Arrange ##
+        var username = "test_username";
+        var alreadyExistUser = new UserEntity(null, username, "test_password", true);
+        userRepository.insert(alreadyExistUser);
+
+        // ## Act ##
+        var actual = cut.existsUsername(username);
+
+        // ## Assert ##
+        assertThat(actual).isTrue();
+    }
+
 }
