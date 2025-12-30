@@ -12,17 +12,10 @@ public class ExceptionHandlerAdvise {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<InternalServerError> handleInternalServerError(RuntimeException e) {
-        var error = new InternalServerError();
-        error.setType(null);
-        error.setTitle("Internal Server Error");
-        error.setStatus(500);
-        error.setDetail(null);
-        error.setInstance(null);
-
         return ResponseEntity
                 .internalServerError()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(error);
+                .body(new InternalServerError());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
