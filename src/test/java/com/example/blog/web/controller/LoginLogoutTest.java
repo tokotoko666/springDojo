@@ -4,6 +4,8 @@ import com.example.blog.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -70,21 +72,27 @@ class LoginLogoutTest {
                 .andExpect(authenticated().withUsername(username));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("POST /login: ログイン失敗")
-    void login_failure() throws Exception {
+    @ValueSource(strings = {
+            "{ \"username\": \"__invalid__\", \"password\": \"password123\" }",
+            "{ \"username\": \"username123\", \"password\": \"__invalid__\" }",
+            "{                                \"password\": \"password123\" }",
+            "{ \"username\": \"username123\",                               }",
+            "{}",
+            "",
+    })
+    void login_failure(String requestBody) throws Exception {
 
         // ## Arrange ##
-        var username = "username123";
-        var password = "password123";
-        userService.register(username, password);
+        userService.register("username123", "password123");
 
         var newUserJson = """
                 {
                   "username": "%s",
                   "password": "%s"
                 }
-                """.formatted(username, "invalid_password");
+                """.formatted("username123", "invalid_password");
 
         // ## Act ##
         var actual = mockMvc.perform(
