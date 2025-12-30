@@ -106,4 +106,21 @@ class LoginLogoutTest {
         actual.andExpect(status().isUnauthorized())
                 .andExpect(unauthenticated());
     }
+
+    @Test
+    @DisplayName("POST /logout: ログアウト成功")
+    void logout_success() throws Exception {
+
+        // ## Arrange ##
+
+        // ## Act ##
+        var actual = mockMvc.perform(
+                post("/logout")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // ## Assert ##
+        actual.andExpect(status().isOk());
+    }
 }
