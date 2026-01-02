@@ -128,10 +128,8 @@ paths:
       responses:
         '201':
           description: Created
-#          content:
-#            application/json:
-#              schema:
-
+        '401':
+          $ref: "#/components/responses/UnauthorizedResponse"
 components:
   schemas:
     ErrorDetail:
@@ -169,6 +167,28 @@ components:
           type: string
           format: uri
           example: /users
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    Unauthorized:
+      description: ログインが必要です。
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+          default: 401
+          example: 401
+        detail:
+          type: string
+          default: "リクエストを実行するにはログインが必要です"
+        instance:
+          type: string
+          format: uri
+          example: /articles
         errors:
           type: array
           items:
@@ -235,6 +255,12 @@ components:
         application/probrem+json:
           schema:
             $ref: "#/components/schemas/BadRequest"
+    UnauthorizedResponse:
+      description: Unauthorized
+      content:
+        application/probrem+json:
+          schema:
+            $ref: "#/components/schemas/Unauthorized"
     InternalServerErrorResponse:
       description: InternalServerError
       content:
