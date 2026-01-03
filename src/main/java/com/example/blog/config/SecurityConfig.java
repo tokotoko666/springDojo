@@ -1,7 +1,7 @@
 package com.example.blog.config;
 
-import com.example.blog.model.Forbidden;
-import com.example.blog.model.Unauthorized;
+import com.example.blog.web.exception.CustomAccessDeniedHandler;
+import com.example.blog.web.exception.CustomAuthenticationEntryPoint;
 import com.example.blog.web.filter.CsrfCookieFilter;
 import com.example.blog.web.filter.JsonUsernamePasswordAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -26,10 +25,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
-import org.springframework.security.web.csrf.MissingCsrfTokenException;
-
-import java.net.URI;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +35,9 @@ public class SecurityConfig {
                                                    SecurityContextRepository securityContextRepository,
                                                    SessionAuthenticationStrategy sessionAuthenticationStrategy,
                                                    AuthenticationManager authenticationManager,
-                                                   ObjectMapper objectMapper) throws Exception {
+                                                   ObjectMapper objectMapper,
+                                                   CustomAccessDeniedHandler accessDeniedHandler,
+                                                   CustomAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -59,29 +56,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(customizer -> customizer
-                        .accessDeniedHandler((request, response, authException) -> {
-                            if (authException instanceof MissingCsrfTokenException || authException instanceof InvalidCsrfTokenException) {
-                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                                response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-
-                                var body = new Forbidden();
-                                body.detail("CSRFトークンが不正です");
-                                body.instance(URI.create(request.getRequestURI()));
-
-                                objectMapper.writeValue(response.getOutputStream(), body);
-                            }
-                        })
-                        .authenticationEntryPoint((request, response, authException) -> {
-
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-
-                            var body = new Unauthorized();
-                            body.setDetail("リクエストを実行するにはログインが必要です");
-                            body.setInstance(URI.create(request.getRequestURI()));
-
-                            objectMapper.writeValue(response.getOutputStream(), body);
-                        })
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint)
                 )
                 .logout(logout -> logout.logoutSuccessHandler((req, res, auth) -> {
                     res.setStatus(HttpServletResponse.SC_OK);
