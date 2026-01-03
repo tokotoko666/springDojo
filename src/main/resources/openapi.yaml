@@ -130,6 +130,8 @@ paths:
           description: Created
         '401':
           $ref: "#/components/responses/UnauthorizedResponse"
+        '403':
+          $ref: "#/components/responses/ForbiddenResponse"
 components:
   schemas:
     ErrorDetail:
@@ -182,7 +184,6 @@ components:
           type: integer
           format: int32
           default: 401
-          example: 401
         detail:
           type: string
           default: "リクエストを実行するにはログインが必要です"
@@ -190,10 +191,23 @@ components:
           type: string
           format: uri
           example: /articles
-        errors:
-          type: array
-          items:
-            $ref: "#/components/schemas/ErrorDetail"
+    Forbidden:
+      description: 権限がありません
+      type: object
+      properties:
+        title:
+          type: string
+          default: Forbidden
+        status:
+          type: integer
+          format: int32
+          default: 403
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+          example: /articles
     InternalServerError:
       type: object
       properties:
@@ -262,6 +276,12 @@ components:
         application/probrem+json:
           schema:
             $ref: "#/components/schemas/Unauthorized"
+    ForbiddenResponse:
+      description: Forbidden
+      content:
+        application/probrem+json:
+          schema:
+            $ref: "#/components/schemas/Forbidden"
     InternalServerErrorResponse:
       description: InternalServerError
       content:
