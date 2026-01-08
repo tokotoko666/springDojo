@@ -30,7 +30,7 @@ class ArticleServiceMockTest {
     @Test
     public void mockPractice() {
         when(cut.findById(999L)).thenReturn(Optional.of(
-                new ArticleEntity(999, "", "", null, null)
+                new ArticleEntity(999L, "", "", null, null)
         ));
 
         assertThat(articleRepository.selectById(999L)).isPresent()
