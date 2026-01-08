@@ -36,7 +36,7 @@ class ArticleRepositoryTest {
                 .hasValueSatisfying(articleEntity -> {
                     assertThat(articleEntity.getId()).isEqualTo(999L);
                     assertThat(articleEntity.getTitle()).isEqualTo("title_999");
-                    assertThat(articleEntity.getContent()).isEqualTo("body_999");
+                    assertThat(articleEntity.getBody()).isEqualTo("body_999");
                     assertThat(articleEntity.getCreatedAt()).isEqualTo("2010-10-01T00:00:00");
                     assertThat(articleEntity.getUpdatedAt()).isEqualTo("2010-11-01T00:00:00");
                 });

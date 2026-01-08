@@ -62,7 +62,7 @@ class ArticleServiceMockTest {
                 .hasValueSatisfying(articleEntity -> {
                     assertThat(articleEntity.getId()).isEqualTo(999L);
                     assertThat(articleEntity.getTitle()).isEqualTo("title_999");
-                    assertThat(articleEntity.getContent()).isEqualTo("body_999");
+                    assertThat(articleEntity.getBody()).isEqualTo("body_999");
                     assertThat(articleEntity.getCreatedAt()).isEqualTo("2022-01-01T10:00:00");
                     assertThat(articleEntity.getUpdatedAt()).isEqualTo("2022-02-01T11:00:00");
                 });
