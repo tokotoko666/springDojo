@@ -38,11 +38,11 @@ class ArticleServiceNoMockTest {
         // ## Assert ##
         assertThat(actual).isPresent()
                 .hasValueSatisfying(articleEntity -> {
-                    assertThat(articleEntity.id()).isEqualTo(999L);
-                    assertThat(articleEntity.title()).isEqualTo("title_999");
-                    assertThat(articleEntity.content()).isEqualTo("body_999");
-                    assertThat(articleEntity.createdAt()).isEqualTo("2022-01-01T10:00:00");
-                    assertThat(articleEntity.updatedAt()).isEqualTo("2022-02-01T11:00:00");
+                    assertThat(articleEntity.getId()).isEqualTo(999L);
+                    assertThat(articleEntity.getTitle()).isEqualTo("title_999");
+                    assertThat(articleEntity.getContent()).isEqualTo("body_999");
+                    assertThat(articleEntity.getCreatedAt()).isEqualTo("2022-01-01T10:00:00");
+                    assertThat(articleEntity.getUpdatedAt()).isEqualTo("2022-02-01T11:00:00");
                 });
     }
 
