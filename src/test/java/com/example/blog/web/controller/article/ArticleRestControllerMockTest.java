@@ -46,6 +46,7 @@ class ArticleRestControllerMockTest {
         var expected = new ArticleEntity(999L,
                 "title_999",
                 "content_999",
+                null,
                 LocalDateTime.of(2022, 1, 2, 3, 4, 5),
                 LocalDateTime.of(2023, 1, 2, 3, 4, 5)
         );
