@@ -22,8 +22,14 @@ class ArticleRepositoryTest {
     @Test
     @DisplayName("selectById: 指定されたIDの記事が存在するとき、ArticleEntity を返す")
     @Sql(statements = """
-            INSERT INTO articles(id, title, body, created_at, updated_at)
-            VALUES(999, 'title_999', 'body_999', '2010-10-01 00:00:00', '2010-11-01 00:00:00');
+            DELETE FROM articles;
+            DELETE FROM users;
+            
+            INSERT INTO users(id, username, password, enabled)
+            VALUES(1, 'test_user_1', 'test_password_1', true);
+            
+            INSERT INTO articles(id, user_id, title, body, created_at, updated_at)
+            VALUES(999, 1, 'title_999', 'body_999', '2010-10-01 00:00:00', '2010-11-01 00:00:00');
             """)
     public void selectById_returnArticleEntity() {
         // ## Arrange ##
@@ -37,8 +43,8 @@ class ArticleRepositoryTest {
                     assertThat(articleEntity.getId()).isEqualTo(999L);
                     assertThat(articleEntity.getTitle()).isEqualTo("title_999");
                     assertThat(articleEntity.getBody()).isEqualTo("body_999");
-                    assertThat(articleEntity.getCreatedAt()).isEqualTo("2010-10-01T00:00:00");
-                    assertThat(articleEntity.getUpdatedAt()).isEqualTo("2010-11-01T00:00:00");
+                    assertThat(articleEntity.getCreatedAt()).isEqualTo("2010-10-01T00:00:00+09:00");
+                    assertThat(articleEntity.getUpdatedAt()).isEqualTo("2010-11-01T00:00:00+09:00");
                 });
     }
 
