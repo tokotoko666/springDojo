@@ -20,4 +20,6 @@ public interface ArticleRepository {
             WHERE id = #{id}
             """)
     Optional<ArticleEntity> selectById(long id);
+
+    void insert(ArticleEntity newEntity);
 }
