@@ -49,6 +49,10 @@ class ArticleRepositoryTest {
                     assertThat(articleEntity.getId()).isEqualTo(999L);
                     assertThat(articleEntity.getTitle()).isEqualTo("title_999");
                     assertThat(articleEntity.getBody()).isEqualTo("body_999");
+                    assertThat(articleEntity.getAuthor().getId()).isEqualTo(1L);
+                    assertThat(articleEntity.getAuthor().getUsername()).isEqualTo("test_user_1");
+                    assertThat(articleEntity.getAuthor().getPassword()).isNull();
+                    assertThat(articleEntity.getAuthor().isEnabled()).isTrue();
                     assertThat(articleEntity.getCreatedAt()).isEqualTo("2010-10-01T00:00:00+09:00");
                     assertThat(articleEntity.getUpdatedAt()).isEqualTo("2010-11-01T00:00:00+09:00");
                 });
@@ -86,7 +90,10 @@ class ArticleRepositoryTest {
             assertThat(actualEntity.getId()).isEqualTo(expectedEntity.getId());
             assertThat(actualEntity.getTitle()).isEqualTo(expectedEntity.getTitle());
             assertThat(actualEntity.getBody()).isEqualTo(expectedEntity.getBody());
-            // TODO author
+            assertThat(actualEntity.getAuthor().getId()).isEqualTo(expectedEntity.getAuthor().getId());
+            assertThat(actualEntity.getAuthor().getUsername()).isEqualTo(expectedEntity.getAuthor().getUsername());
+            assertThat(actualEntity.getAuthor().getPassword()).isNull();
+            assertThat(actualEntity.getAuthor().isEnabled()).isEqualTo(expectedEntity.getAuthor().isEnabled());
             assertThat(actualEntity.getCreatedAt()).isEqualTo(expectedEntity.getCreatedAt());
             assertThat(actualEntity.getUpdatedAt()).isEqualTo(expectedEntity.getUpdatedAt());
         });
