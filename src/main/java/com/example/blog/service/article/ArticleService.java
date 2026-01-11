@@ -32,6 +32,8 @@ public class ArticleService {
         );
 
         articleRepository.insert(newEntity);
-        return newEntity;
+
+        return articleRepository.selectById(newEntity.getId())
+                .orElseThrow(() -> new IllegalStateException("never reached"));
     }
 }
