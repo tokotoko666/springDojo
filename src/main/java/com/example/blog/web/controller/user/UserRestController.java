@@ -1,19 +1,12 @@
 package com.example.blog.web.controller.user;
 
 import com.example.blog.api.UsersApi;
-import com.example.blog.model.BadRequest;
-import com.example.blog.model.ErrorDetail;
 import com.example.blog.model.UserDTO;
 import com.example.blog.model.UserForm;
 import com.example.blog.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.DataBinder;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +20,6 @@ public class UserRestController implements UsersApi {
 
     private final UserService userService;
     private final DuplicateUsernameValidator duplicateUsernameValidator;
-    private final MessageSource messageSource;
 
     @InitBinder
     public void initBinder(DataBinder dataBinder) {
@@ -51,26 +43,5 @@ public class UserRestController implements UsersApi {
         return ResponseEntity
                 .created(location)
                 .body(dto);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BadRequest> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        var body = new BadRequest();
-        BeanUtils.copyProperties(e.getBody(), body);
-
-        var locale = LocaleContextHolder.getLocale();
-        var errorDetailList = e.getBindingResult().getFieldErrors()
-                .stream()
-                .map(fieldError -> {
-                    var pointer = "#/" + fieldError.getField();
-                    var detail = messageSource.getMessage(fieldError, locale);
-                    var errorDetail = new ErrorDetail();
-                    errorDetail.setPointer(pointer);
-                    errorDetail.setDetail(detail);
-                    return errorDetail;
-                }).toList();
-
-        body.setErrors(errorDetailList);
-        return ResponseEntity.badRequest().body(body);
     }
 }
