@@ -1,13 +1,11 @@
 package com.example.blog.web.controller.article;
 
 import com.example.blog.api.ArticlesApi;
-import com.example.blog.model.ArticleDTO;
-import com.example.blog.model.ArticleForm;
-import com.example.blog.model.ArticleListDTO;
-import com.example.blog.model.UserDTO;
+import com.example.blog.model.*;
 import com.example.blog.security.LoggedInUser;
 import com.example.blog.service.article.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +48,22 @@ public class ArticleRestController implements ArticlesApi {
 
     @Override
     public ResponseEntity<ArticleListDTO> listArticles() {
-        var entity = articleService.findAll();
-        return ResponseEntity.ok(new ArticleListDTO());
+        var items = articleService.findAll()
+                .stream()
+                .map(entity -> {
+                    var itemDTO = new ArticleListItemDTO();
+                    BeanUtils.copyProperties(entity, itemDTO);
+
+                    var userDTO = new UserDTO();
+                    BeanUtils.copyProperties(entity.getAuthor(), userDTO);
+                    itemDTO.setAuthor(userDTO);
+
+                    return itemDTO;
+                }).toList();
+
+        var body = new ArticleListDTO();
+        body.setItems(items);
+
+        return ResponseEntity.ok(body);
     }
 }
