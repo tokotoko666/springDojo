@@ -152,7 +152,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerErrorResponse"
     get:
-      tags: [articles]
+      tags: [ articles ]
       summary: 記事の一覧を取得します
       description: >
         記事の一覧を取得します。
@@ -165,6 +165,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ArticleListDTO"
+        '500':
+          $ref: "#/components/responses/InternalServerErrorResponse"
+  /articles/{articleId}:
+    get:
+      tags: [ articles ]
+      summary: 記事の詳細を取得します
+      description: 記事の詳細を取得します
+      operationId: getArticle
+      parameters:
+        - name: articleId
+          in: path
+          description: 記事のId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleDTO"
+        '404':
+          $ref: "#/components/responses/NotFoundResponse"
         '500':
           $ref: "#/components/responses/InternalServerErrorResponse"
 components:
@@ -243,6 +268,23 @@ components:
           type: string
           format: uri
           example: /articles
+    NotFound:
+      description: リソースが見つかりません
+      type: object
+      properties:
+        title:
+          type: string
+          default: NotFound
+        status:
+          type: integer
+          format: int32
+          default: 404
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+          example: /articles/123
     InternalServerError:
       type: object
       properties:
@@ -371,6 +413,12 @@ components:
         application/probrem+json:
           schema:
             $ref: "#/components/schemas/Forbidden"
+    NotFoundResponse:
+      description: NotFound
+      content:
+        application/probrem+json:
+          schema:
+            $ref: "#/components/schemas/NotFound"
     InternalServerErrorResponse:
       description: InternalServerError
       content:
