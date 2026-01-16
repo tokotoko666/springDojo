@@ -1,5 +1,6 @@
 package com.example.blog.web.controller;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,11 +57,11 @@ class CSRFCookieRestControllerTest {
             // ## Assert ##
             result.andExpect(status().isInternalServerError())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                    .andExpect(jsonPath("$.type").value("about:blank"))
                     .andExpect(jsonPath("$.title").value("Internal Server Error"))
                     .andExpect(jsonPath("$.status").value(500))
                     .andExpect(jsonPath("$.detail").isEmpty())
-                    .andExpect(jsonPath("$.instance").isEmpty())
+                    .andExpect(jsonPath("$.instance").value("/csrf-cookie"))
+                    .andExpect(jsonPath("$", Matchers.aMapWithSize(4)))
             ;
         }
     }
