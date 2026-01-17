@@ -44,15 +44,16 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleEntity update(long userId, long articleId, String updatedTitle, String updatedBody) {
-        // TODO mock impl
-        var entity = findById(articleId).orElseThrow();
-        entity.setTitle(updatedTitle);
-        entity.setBody(updatedBody);
-        entity.setUpdatedAt(dateTimeService.now());
+    public Optional<ArticleEntity> update(long userId, long articleId, String updatedTitle, String updatedBody) {
+        return findById(articleId)
+                .map(entity -> {
+                    entity.setTitle(updatedTitle);
+                    entity.setBody(updatedBody);
+                    entity.setUpdatedAt(dateTimeService.now());
 
-        articleRepository.update(entity);
+                    articleRepository.update(entity);
 
-        return entity;
+                    return entity;
+                });
     }
 }
