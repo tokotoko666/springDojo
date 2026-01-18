@@ -119,4 +119,44 @@ class ArticleRestControllerUpdateArticleTest {
                 .andExpect(jsonPath("$.instance").value("/articles/" + invalidArticleId))
         ;
     }
+
+    @Test
+    @DisplayName("PUT /articles/{articleId}: 自分が作成した記事以外の記事を編集しようとしたとき 403 を返す")
+    void updateArticles_403Forbidden_authorId() throws Exception {
+        // ## Arrange ##
+        when(mockDateTimeService.now())
+                .thenReturn(TestDateTimeUtil.of(2020, 1, 1, 10, 20, 30))
+                .thenReturn(TestDateTimeUtil.of(2020, 2, 1, 10, 20, 30));
+        var creator = userService.register("test_username1", "test_password1");
+        var existingArticle = articleService.create(creator.getId(), "test_title", "test_body");
+
+        var otherUser = userService.register("test_username2", "test_password2");
+        var loggedInOtherUser = new LoggedInUser(otherUser.getId(), creator.getUsername(), creator.getPassword(), creator.isEnabled());
+
+        var bodyJson = """
+                {
+                  "title": "test_title_updated",
+                  "body": "test_body_updated"
+                }
+                """;
+
+        // ## Act ##
+        var actual = mockMvc.perform(
+                put("/articles/{articleId}", existingArticle.getId())
+                        .with(csrf())
+                        .with(user(loggedInOtherUser))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyJson)
+        );
+
+        // ## Assert ##
+        actual
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Forbidden"))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.detail").value("リソースへのアクセスが拒否されました"))
+                .andExpect(jsonPath("$.instance").value("/articles/" + existingArticle.getId()))
+        ;
+    }
 }
