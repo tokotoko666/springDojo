@@ -145,13 +145,12 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.detail").value("Invalid request content."))
-                .andExpect(jsonPath("$.type").value("about:blank"))
+                .andExpect(jsonPath("$.instance").value("/users"))
                 .andExpect(jsonPath("$.errors", hasItem(
                         allOf(
                                 hasEntry("pointer", "#/username"),
                                 hasEntry("detail", "このユーザー名はすでに使用されています")
                         ))))
-                .andExpect(jsonPath("$.instance").isEmpty())
                 .andDo(print());
     }
 
@@ -181,13 +180,12 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.detail").value("Invalid request content."))
-                .andExpect(jsonPath("$.type").value("about:blank"))
+                .andExpect(jsonPath("$.instance").value("/users"))
                 .andExpect(jsonPath("$.errors", hasItem(
                         allOf(
                                 hasEntry("pointer", "#/username"),
                                 hasEntry("detail", "ユーザー名は3文字以上32文字以内で入力してください。半角英数字、ハイフン、アンダースコア、ドットのみを使用できます。先頭と末尾にハイフン、アンダースコア、ドットを使用することはできません。")
                         ))))
-                .andExpect(jsonPath("$.instance").isEmpty())
                 .andDo(print());
     }
 
@@ -217,13 +215,12 @@ class UserRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.detail").value("Invalid request content."))
-                .andExpect(jsonPath("$.type").value("about:blank"))
+                .andExpect(jsonPath("$.instance").value("/users"))
                 .andExpect(jsonPath("$.errors", hasItem(
                         allOf(
                                 hasEntry("pointer", "#/password"),
                                 hasEntry("detail", "パスワードは10文字以上255文字以内で入力してください。半角の英大文字、英小文字、数字、および記号のみ使用できます。")
                         ))))
-                .andExpect(jsonPath("$.instance").isEmpty())
                 .andDo(print());
     }
 }
