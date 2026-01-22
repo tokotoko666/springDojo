@@ -460,25 +460,25 @@ components:
     BadRequestResponse:
       description: BadRequest
       content:
-        application/probrem+json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/BadRequest"
     UnauthorizedResponse:
       description: Unauthorized
       content:
-        application/probrem+json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/Unauthorized"
     ForbiddenResponse:
       description: Forbidden
       content:
-        application/probrem+json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/Forbidden"
     NotFoundResponse:
       description: NotFound
       content:
-        application/probrem+json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/NotFound"
     InternalServerErrorResponse:
