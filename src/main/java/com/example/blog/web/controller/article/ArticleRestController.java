@@ -62,4 +62,11 @@ public class ArticleRestController implements ArticlesApi {
         var entity = articleService.update(loggedInUser.getUserId(), articleId, form.getTitle(), form.getBody());
         return ResponseEntity.ok(ArticleMapper.toArticleDTO(entity));
     }
+
+    @Override
+    public ResponseEntity<Void> deleteArticle(Long articleId) {
+        var loggedInUser = (LoggedInUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        articleService.delete(loggedInUser.getUserId(), articleId);
+        return ResponseEntity.noContent().build();
+    }
 }

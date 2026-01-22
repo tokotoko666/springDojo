@@ -69,4 +69,11 @@ public interface ArticleRepository {
               AND user_id = #{author.id}
             """)
     void update(ArticleEntity entity);
+
+    @Delete("""
+            DELETE FROM articles
+            WHERE id    = #{id}
+            AND user_id = #{author.id}
+            """)
+    void delete(ArticleEntity entity);
 }
