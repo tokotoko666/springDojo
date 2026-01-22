@@ -19,13 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -158,24 +157,17 @@ class ArticleRestControllerDeleteArticleTest {
     }
 
     @Test
-    @DisplayName("PUT /articles/{articleId}: 指定されたIDの記事が存在しないとき、404を返す")
-    void updateArticles_404OK() throws Exception {
+    @DisplayName("DELETE /articles/{articleId}: 指定されたIDの記事が存在しないとき、404を返す")
+    void deleteArticles_404OK() throws Exception {
         // ## Arrange ##
         var invalidArticleId = 0;
-        var bodyJson = """
-                {
-                  "title": "test_title_updated",
-                  "body": "test_body_updated"
-                }
-                """;
 
         // ## Act ##
         var actual = mockMvc.perform(
-                put("/articles/{articleId}", invalidArticleId)
+                delete("/articles/{articleId}", invalidArticleId)
                         .with(csrf())
                         .with(user(loggedInAuthor))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyJson)
         );
 
         // ## Assert ##
@@ -187,41 +179,5 @@ class ArticleRestControllerDeleteArticleTest {
                 .andExpect(jsonPath("$.detail").value("リソースが見つかりません"))
                 .andExpect(jsonPath("$.instance").value("/articles/" + invalidArticleId))
         ;
-    }
-
-    @Test
-    @DisplayName("PUT /articles/{articleId}: リクエストの title フィールドがバリデーションNGのとき、400 BadRequest")
-    void updateArticle_400BadRequest() throws Exception {
-        // ## Arrange ##
-        var bodyJson = """
-                {
-                  "title": "",
-                  "body": "test_body_updated"
-                }
-                """;
-
-        // ## Act ##
-        var actual = mockMvc.perform(
-                put("/articles/{articleId}", existingArticle.getId())
-                        .with(csrf())
-                        .with(user(loggedInAuthor))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyJson)
-        );
-
-        // ## Assert ##
-        actual
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(jsonPath("$.title").value("Bad Request"))
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.detail").value("Invalid request content."))
-                .andExpect(jsonPath("$.instance").value("/articles/" + existingArticle.getId()))
-                .andExpect(jsonPath("$.errors", hasItem(
-                        allOf(
-                                hasEntry("pointer", "#/title"),
-                                hasEntry("detail", "タイトルは1文字以上255文字以内で入力してください。")
-                        ))))
-                .andDo(print());
     }
 }
