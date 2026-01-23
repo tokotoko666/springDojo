@@ -191,7 +191,6 @@ class ArticleServiceTest {
         var existingArticle = cut.create(author.getId(), "test_title", "test_body");
 
         var otherUser = new UserEntity(null, "test_user2", "test_password2", true);
-        otherUser.setEnabled(true);
         userRepository.insert(otherUser);
 
         // ## Act & Assert ##
@@ -234,5 +233,23 @@ class ArticleServiceTest {
 
         // ## Act & Assert ##
         assertThrows(ResourceNotFoundException.class, () -> cut.delete(author.getId(), invalidArticleId));
+    }
+
+    @Test
+    @DisplayName("delete: 他人の記事を削除しようとしたとき、UnauthorizedResourceAccessException を throw する")
+    void delete_throwUnauthorizedResourceAccessException() {
+        // ## Arrange ##
+        when(mockDateTimeService.now()).thenReturn(TestDateTimeUtil.of(2020, 1, 10, 10, 10, 10));
+        var author = new UserEntity(null, "test_user1", "test_password1", true);
+        author.setEnabled(true);
+        userRepository.insert(author);
+
+        var existingArticle = cut.create(author.getId(), "test_title", "test_body");
+
+        var otherUser = new UserEntity(null, "test_user2", "test_password2", true);
+        userRepository.insert(otherUser);
+
+        // ## Act & Assert ##
+        assertThrows(UnAuthorizedResourceAccessException.class, () -> cut.delete(otherUser.getId(), existingArticle.getId()));
     }
 }
