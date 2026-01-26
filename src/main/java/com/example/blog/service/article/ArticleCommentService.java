@@ -1,20 +1,30 @@
 package com.example.blog.service.article;
 
+import com.example.blog.repository.article.ArticleCommentRepository;
+import com.example.blog.service.DateTimeService;
 import com.example.blog.service.user.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-
 @Service
+@RequiredArgsConstructor
 public class ArticleCommentService {
+
+    private final ArticleCommentRepository articleCommentRepository;
+    private final DateTimeService dateTimeService;
+
     public ArticleCommentEntity create(long userId, long articleId, String body) {
 
-        return new ArticleCommentEntity(
+        var newComment = new ArticleCommentEntity(
                 null,
                 body,
                 new ArticleEntity(articleId, "", "", null, null, null),
                 new UserEntity(userId, "", "", true),
-                OffsetDateTime.now()
+                dateTimeService.now()
         );
+
+        articleCommentRepository.insert(newComment);
+
+        return newComment;
     }
 }
