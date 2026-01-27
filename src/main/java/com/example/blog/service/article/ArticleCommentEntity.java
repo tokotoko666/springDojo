@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 public class ArticleCommentEntity {
     private Long id;
     private String body;
-    private ArticleEntity articleEntity;
+    private ArticleEntity article;
     private UserEntity author;
     private OffsetDateTime createdAt;
 }
