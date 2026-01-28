@@ -49,9 +49,9 @@ public interface ArticleCommentRepository {
             @Result(column = "article_comment__id", property = "id"),
             @Result(column = "article_comment__body", property = "body"),
             @Result(column = "article_comment__created_at", property = "createdAt"),
-            @Result(column = "article_comment__updated_at", property = "updatedAt"),
 
             @Result(column = "article__id", property = "article.id"),
+            @Result(column = "article__title", property = "article.title"),
             @Result(column = "article__body", property = "article.body"),
             @Result(column = "article__created_at", property = "article.createdAt"),
             @Result(column = "article__updated_at", property = "article.updatedAt"),
