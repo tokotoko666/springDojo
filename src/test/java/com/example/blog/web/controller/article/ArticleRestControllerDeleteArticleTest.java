@@ -158,7 +158,7 @@ class ArticleRestControllerDeleteArticleTest {
 
     @Test
     @DisplayName("DELETE /articles/{articleId}: 指定されたIDの記事が存在しないとき、404を返す")
-    void deleteArticles_404OK() throws Exception {
+    void deleteArticles_404NotFound() throws Exception {
         // ## Arrange ##
         var invalidArticleId = 0;
 

@@ -24,7 +24,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -182,6 +185,37 @@ class ArticleRestControllerCreateArticleCommentTest {
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.detail").value("CSRFトークンが不正です"))
                 .andExpect(jsonPath("$.instance").value("/articles/%d/comments".formatted(article.getId())))
+        ;
+    }
+
+    @Test
+    @DisplayName("POST /articles/{articleId}/comments: 指定されたIDの記事が存在しないとき、404を返す")
+    void postArticles_404NotFound() throws Exception {
+        // ## Arrange ##
+        var invalidArticleId = 0;
+        var bodyJson = """
+                {
+                  "body": "test_body"
+                }
+                """;
+
+        // ## Act ##
+        var actual = mockMvc.perform(
+                post("/articles/{articleId}/comments", invalidArticleId)
+                        .with(csrf())
+                        .with(user(loggedInCommentAuthor))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyJson)
+        );
+
+        // ## Assert ##
+        actual
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.detail").value("リソースが見つかりません"))
+                .andExpect(jsonPath("$.instance").value("/articles/%d/comments".formatted(invalidArticleId)))
         ;
     }
 }
