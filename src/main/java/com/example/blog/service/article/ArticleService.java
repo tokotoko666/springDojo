@@ -19,6 +19,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final DateTimeService dateTimeService;
 
+    @Transactional(readOnly = true)
     public Optional<ArticleEntity> findById(long id) {
         return articleRepository.selectById(id);
     }
@@ -41,6 +42,7 @@ public class ArticleService {
                 .orElseThrow(() -> new IllegalStateException("never reached"));
     }
 
+    @Transactional(readOnly = true)
     public List<ArticleEntity> findAll() {
         return articleRepository.selectAll();
     }
