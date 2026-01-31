@@ -1,19 +1,26 @@
 package com.example.blog.service.article;
 
 import com.example.blog.repository.article.ArticleCommentRepository;
+import com.example.blog.repository.article.ArticleRepository;
 import com.example.blog.service.DateTimeService;
+import com.example.blog.service.exception.ResourceNotFoundException;
 import com.example.blog.service.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleCommentService {
 
     private final ArticleCommentRepository articleCommentRepository;
+    private final ArticleRepository articleRepository;
     private final DateTimeService dateTimeService;
 
+    @Transactional
     public ArticleCommentEntity create(long userId, long articleId, String body) {
+
+        articleRepository.selectById(articleId).orElseThrow(ResourceNotFoundException::new);
 
         var newComment = new ArticleCommentEntity(
                 null,
