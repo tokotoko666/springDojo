@@ -521,7 +521,7 @@ components:
         comments:
           type: integer
           items:
-            $ref: "#/components/schemas/ArticleCommentListDTO"
+            $ref: "#/components/schemas/ArticleCommentDTO"
   responses:
     BadRequestResponse:
       description: BadRequest
