@@ -231,4 +231,32 @@ public class ArticleRestController500InternalServerErrorTest {
                 .andExpect(jsonPath("$", aMapWithSize(4)))
         ;
     }
+
+    @Test
+    @DisplayName("GET /articles/{articleId}/comments: 500 InternalServerError で stacktrace が露出しない")
+    void listArticleComments_500() throws Exception {
+        // ## Arrange ##
+        var userId = 999L;
+        var articleId = 9999L;
+        var body = "test_body";
+
+        doThrow(RuntimeException.class).when(articleCommentService).findByArticleId(articleId);
+
+        // ## Act ##
+        var actual = mockMvc.perform(
+                get("/articles/{articleId}/comments", articleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // ## Assert ##
+        actual
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Internal Server Error"))
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.detail").isEmpty())
+                .andExpect(jsonPath("$.instance").value("/articles/%d/comments".formatted(articleId)))
+                .andExpect(jsonPath("$", aMapWithSize(4)))
+        ;
+    }
 }
