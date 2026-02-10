@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.net.URI;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +51,7 @@ public class UploadUserProfileImageIT {
         var uploadUrlDTO = getUserProfileImageUploadURL(sessionId);
 
         // S3へのファイルアップロード
+        uploadImage(uploadUrlDTO.getImageUploadUrl());
 
         //　ファイルパスの登録
     }
@@ -151,5 +153,20 @@ public class UploadUserProfileImageIT {
         assertThat(actualResponseBody.getImageUploadUrl()).hasParameter("X-Amz-Expires", "600");
 
         return actualResponseBody;
+    }
+
+    private void uploadImage(URI imageUploadUrl) {
+        // ## Arrange ##
+        var imageBytes = "あとで画像に置き換える".getBytes();
+
+        // ## Act ##
+        var responseSpec = webTestClient
+                .put().uri(imageUploadUrl)
+                .contentType(MediaType.IMAGE_PNG)
+                .bodyValue(imageBytes)
+                .exchange();
+
+        // ## Assert ##
+        responseSpec.expectStatus().isOk();
     }
 }
