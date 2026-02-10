@@ -20,7 +20,7 @@ public class StorageService {
 
     // ref. https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-s3-presign.html#put-presigned-object-part1
     /* Create a presigned URL to use in a subsequent PUT request */
-    public String createPresignedUrl(String bucketName, String keyName, Map<String, String> metadata) {
+    private String createPresignedUrl(String bucketName, String keyName, Map<String, String> metadata) {
         try (S3Presigner presigner = S3Presigner.create()) {
 
             PutObjectRequest objectRequest = PutObjectRequest.builder()
