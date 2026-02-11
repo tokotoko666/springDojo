@@ -150,7 +150,13 @@ public class UploadUserProfileImageIT {
         assertThat(actualResponseBody).isNotNull();
         assertThat(actualResponseBody.getImagePath()).isNotBlank();
         assertThat(actualResponseBody.getImageUploadUrl().toString()).isNotBlank();
-        assertThat(actualResponseBody.getImageUploadUrl()).hasParameter("X-Amz-Expires", "600");
+        assertThat(actualResponseBody.getImageUploadUrl())
+                .hasScheme("http")
+                .hasHost("localhost")
+                .hasPort(4566)
+                .hasPath("/profile-images/test-key")
+                .hasParameter("X-Amz-Expires", "600")
+                .hasParameter("X-Amz-Signature");
 
         return actualResponseBody;
     }
