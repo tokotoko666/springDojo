@@ -35,7 +35,7 @@ public class StorageService {
     }
 
     public String createUploadURL(String fileName, String contentType, Long contentLength) {
-        return createPresignedUrl(s3Properties.bucket().profileImages(), "test-key", Map.of());
+        return createPresignedUrl(s3Properties.bucket().profileImages(), fileName, Map.of());
     }
 
     // ref. https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-s3-presign.html#put-presigned-object-part1
