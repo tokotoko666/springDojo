@@ -45,11 +45,20 @@ public class UploadUserProfileImageIT {
     @BeforeEach
     public void beforeEach() {
         userService.delete(TEST_USERNAME);
+        deleteImage(TEST_IMAGE_FILE_NAME);
     }
 
     @AfterEach
     public void afterEach() {
         userService.delete(TEST_USERNAME);
+        deleteImage(TEST_IMAGE_FILE_NAME);
+    }
+
+    private void deleteImage(String fileName) {
+        testS3Client.deleteObject(builder -> builder
+                .bucket(s3Properties.bucket().profileImages())
+                .key(fileName)
+                .build());
     }
 
     @Test
@@ -180,7 +189,7 @@ public class UploadUserProfileImageIT {
         var imageResource = new ClassPathResource(TEST_IMAGE_FILE_NAME);
         var imageFile = imageResource.getFile();
         var imageBytes = Files.readAllBytes(imageFile.toPath());
-        
+
         // ## Act ##
         var responseSpec = webTestClient
                 .put().uri(imageUploadUrl)
