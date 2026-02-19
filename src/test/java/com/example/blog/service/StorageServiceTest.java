@@ -21,6 +21,8 @@ class StorageServiceTest {
 
     @Autowired
     private StorageService cut;
+    @Autowired
+    private S3Properties s3Properties;
 
     @Test
     void test() {
@@ -36,6 +38,11 @@ class StorageServiceTest {
         var actual = cut.createUploadURL("test.png", "image/png", 111L);
 
         // ## Assert ##
-        assertThat(actual).isNotBlank();
+        assertThat(actual)
+                .contains(s3Properties.bucket().profileImages() + "/test.png")
+                .contains("X-Amz-Expires=600")
+                .contains("X-Amz-SignedHeaders=content-type%3Bhost")
+                .contains("X-Amz-Signature")
+        ;
     }
 }
