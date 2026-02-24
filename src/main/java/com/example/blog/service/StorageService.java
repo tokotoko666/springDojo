@@ -20,18 +20,19 @@ public class StorageService {
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
 
-    public String createUploadURL(String fileName, String contentType, Long contentLength) {
-        return createPresignedUrl(s3Properties.bucket().profileImages(), fileName, contentType, Map.of());
+    public String createUploadURL(String fileName, String contentType, long contentLength) {
+        return createPresignedUrl(s3Properties.bucket().profileImages(), fileName, contentType, Map.of(), contentLength);
     }
 
     // ref. https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-s3-presign.html#put-presigned-object-part1
     /* Create a presigned URL to use in a subsequent PUT request */
-    private String createPresignedUrl(String bucketName, String keyName, String contentType, Map<String, String> metadata) {
+    private String createPresignedUrl(String bucketName, String keyName, String contentType, Map<String, String> metadata, long contentLength) {
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(keyName)
                 .contentType(contentType)
+                .contentLength(contentLength)
                 .metadata(metadata)
                 .build();
 
