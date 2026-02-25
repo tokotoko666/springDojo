@@ -2,17 +2,23 @@ package com.example.blog.service.user;
 
 import com.example.blog.config.MybatisDefaultDataSourceTest;
 import com.example.blog.config.PasswordEncoderConfig;
+import com.example.blog.config.S3PresignerConfig;
+import com.example.blog.config.S3Properties;
+import com.example.blog.repository.file.FileRepository;
 import com.example.blog.repository.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @MybatisDefaultDataSourceTest
-@Import({UserService.class, PasswordEncoderConfig.class})
+@EnableConfigurationProperties(S3Properties.class)
+@Import({UserService.class, PasswordEncoderConfig.class, FileRepository.class, S3PresignerConfig.class})
 class UserServiceTest {
 
     @Autowired
@@ -79,4 +85,17 @@ class UserServiceTest {
         // ## Assert ##
         assertThat(actual).isFalse();
     }
+
+    @Test
+    @DisplayName("createProfileImageUploadURL: プロフィール画像登録の URL が生成されること")
+    void createProfileImageUploadURL_success() {
+        // ## Arrange ##
+
+        // ## Act ##
+        var actual = cut.createProfileImageUploadURL("test.png", MediaType.IMAGE_PNG_VALUE, 1024);
+
+        // ## Assert ##
+        assertThat(actual).isNotNull();
+    }
+
 }
