@@ -1,4 +1,6 @@
 package com.example.blog.service.user;
 
-public record ProfileImageUpload(String uploadURL, String imagePath) {
+import java.net.URI;
+
+public record ProfileImageUpload(URI uploadURL, String imagePath) {
 }

@@ -9,6 +9,8 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Map;
 
@@ -20,13 +22,13 @@ public class FileRepository {
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
 
-    public String createUploadURL(String fileName, String contentType, long contentLength) {
+    public URI createUploadURL(String fileName, String contentType, long contentLength) {
         return createPresignedUrl(s3Properties.bucket().profileImages(), fileName, contentType, Map.of(), contentLength);
     }
 
     // ref. https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-s3-presign.html#put-presigned-object-part1
     /* Create a presigned URL to use in a subsequent PUT request */
-    private String createPresignedUrl(String bucketName, String keyName, String contentType, Map<String, String> metadata, long contentLength) {
+    private URI createPresignedUrl(String bucketName, String keyName, String contentType, Map<String, String> metadata, long contentLength) {
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -46,6 +48,11 @@ public class FileRepository {
         log.info("Presigned URL to upload a file to: [{}]", myURL);
         log.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
 
-        return presignedRequest.url().toExternalForm();
+        try {
+            return presignedRequest.url().toURI();
+        } catch (URISyntaxException e) {
+            log.error("Failed to convert URL [{}] to URI", presignedRequest.url(), e);
+            throw new IllegalStateException("Failed to convert presigned URL to URI", e);
+        }
     }
 }
