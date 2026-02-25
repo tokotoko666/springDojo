@@ -33,7 +33,8 @@ public class UserService {
         return userRepository.selectByUsername(username).isPresent();
     }
 
-    public String createProfileImageUploadURL(String fileName, String contentType, long contentLength) {
-        return fileRepository.createUploadURL(fileName, contentType, contentLength);
+    public ProfileImageUpload createProfileImageUploadURL(String fileName, String contentType, long contentLength) {
+        var uploadURL = fileRepository.createUploadURL(fileName, contentType, contentLength);
+        return new ProfileImageUpload(uploadURL, "dummy");
     }
 }
