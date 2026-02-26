@@ -82,6 +82,7 @@ public class UploadUserProfileImageIT {
         uploadImage(uploadUrlDTO.getImageUploadUrl(), MediaType.IMAGE_PNG);
 
         //　ファイルパスの登録
+        updateUserProfileImage(sessionId, uploadUrlDTO.getImagePath(), xsrfToken);
     }
 
     private String getCsrfCookie() {
@@ -304,5 +305,26 @@ public class UploadUserProfileImageIT {
                 .build();
         assertThatThrownBy(() -> testS3Client.headObject(request))
                 .isInstanceOf(NoSuchKeyException.class);
+    }
+
+    private void updateUserProfileImage(String loginSessionCookie, String imagePath, String xsrfToken) {
+        // ## Arrange ##
+        var bodyJson = String.format("""
+                {
+                   "imagePath": "%s"
+                }
+                """, imagePath);
+        // ## Act ##
+        var responseSpec = webTestClient
+                .put().uri("/users/me/image")
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(SESSION_COOKIE_NAME, loginSessionCookie)
+                .cookie("XSRF-TOKEN", xsrfToken)
+                .header("X-XSRF-TOKEN", xsrfToken)
+                .bodyValue(bodyJson)
+                .exchange();
+
+        // ## Assert ##
+        var actualResponseBody = responseSpec.expectStatus().isOk();
     }
 }
