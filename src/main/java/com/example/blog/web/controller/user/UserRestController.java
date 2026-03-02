@@ -58,6 +58,8 @@ public class UserRestController implements UsersApi {
 
     @Override
     public ResponseEntity<UserDTO> updateUserProfileImage(UserProfileImageForm userProfileImageForm) {
-        return ResponseEntity.ok(new UserDTO().id(1L).username("test_username"));
+        var updateUser = userService.updateProfileImage("dummyUsername", userProfileImageForm.getImagePath());
+        var userDTO = new UserDTO().id(updateUser.getId()).username(updateUser.getUsername()).imagePath(userProfileImageForm.getImagePath());
+        return ResponseEntity.ok(userDTO);
     }
 }

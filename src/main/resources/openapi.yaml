@@ -516,6 +516,12 @@ components:
         username:
           type: string
           example: username123
+        imagePath:
+          description: |
+            アップロードされた画像のファイルパス。
+            事前に`/users/me/image-upload-url` で取得したレスポンスに含まれる `imagePath` を設定してください。
+          type: string
+          example: user1_20241210T224934Z.png
     UserProfileImageUploadURLDTO:
       type: object
       properties:

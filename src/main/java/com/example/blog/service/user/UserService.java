@@ -37,4 +37,8 @@ public class UserService {
         var uploadURL = fileRepository.createUploadURL(fileName, contentType, contentLength);
         return new ProfileImageUpload(uploadURL, "dummy");
     }
+
+    public UserEntity updateProfileImage(String username, String imagePath) {
+        return new UserEntity(1L, username, "hoge", false);
+    }
 }
