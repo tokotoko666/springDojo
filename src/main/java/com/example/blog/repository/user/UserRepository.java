@@ -36,4 +36,11 @@ public interface UserRepository {
             WHERE u.username = #{username}
             """)
     void deleteByUsername(String username);
+
+    @Update("""
+            UPDATE FROM users u
+            SET u.image_path = #{imagePath}
+            WHERE u.username = #{username}
+            """)
+    void update(String imagePath, String username);
 }
