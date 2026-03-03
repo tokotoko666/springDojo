@@ -95,4 +95,25 @@ class UserRepositoryTest {
                     assertThat(actualEntity.isEnabled()).isTrue();
                 });
     }
+
+    @Test
+    @DisplayName("update: Userentity を更新することができる")
+    void update_success() {
+        // #Arrange ##
+        var existingUser = new UserEntity(1L, "user_1", "password_1", "path", true);
+        cut.insert(existingUser);
+
+        var userToUpdate = new UserEntity(
+                existingUser.getId(),
+                existingUser.getUsername(),
+                existingUser.getPassword() + "_updated",
+                existingUser.getImagePath(),
+                !existingUser.isEnabled()
+        );
+        // #Act ##
+        cut.update(userToUpdate.getImagePath(), userToUpdate.getUsername());
+
+        // #Assert ##
+        assertThat(cut.selectByUsername(existingUser.getUsername())).contains(userToUpdate);
+    }
 }
