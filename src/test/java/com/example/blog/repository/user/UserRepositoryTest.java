@@ -123,4 +123,30 @@ class UserRepositoryTest {
                 .as("指定したユーザーが更新されていない")
                 .contains(existingUser2);
     }
+
+    @Test
+    @DisplayName("update: 更新対象が存在しないときは insert/update がされず、エラーも発生しない")
+    void update_nonExistentUser() {
+        // #Arrange ##
+        var existingUser1 = new UserEntity(1L, "user_1", "password_1", "path", true);
+        cut.insert(existingUser1);
+
+        var nonExistingUser = new UserEntity(
+                999L, // 存在しないユーザーID
+                "dummy_username",
+                "dummy_password",
+                "dummy_imagePath",
+                false
+        );
+        // #Act ##
+        cut.update(nonExistingUser.getImagePath(), nonExistingUser.isEnabled(), nonExistingUser.getId());
+
+        // #Assert ##
+        assertThat(cut.selectByUsername(existingUser1.getUsername()))
+                .as("指定していないユーザーは更新されない")
+                .contains(existingUser1);
+        assertThat(cut.selectByUsername(nonExistingUser.getUsername()))
+                .as("指定しないユーザーに update をかけても insert されない")
+                .isEmpty();
+    }
 }
