@@ -1,11 +1,9 @@
 package com.example.blog.service.user;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class UserEntity {
     private Long id;
@@ -18,6 +16,14 @@ public class UserEntity {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.enabled = enabled;
+    }
+
+    public UserEntity(Long id, String username, String password, String imagePath, boolean enabled) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.imagePath = imagePath;
         this.enabled = enabled;
     }
 }

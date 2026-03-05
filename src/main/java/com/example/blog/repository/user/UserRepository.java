@@ -18,15 +18,17 @@ public interface UserRepository {
                 u.id
               , u.username
               , u.password
+              , u.image_path
               , u.enabled
             FROM users u
             WHERE u.username = #{username}
             """)
+    @Result(column = "image_path", property = "imagePath")
     Optional<UserEntity> selectByUsernameInternal(String username);
 
     @Insert("""
-            INSERT INTO users(username, password, enabled)
-            VALUES(#{username}, #{password}, #{enabled})
+            INSERT INTO users(username, password, image_path, enabled)
+            VALUES(#{username}, #{password}, #{imagePath}, #{enabled})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(UserEntity entity);
@@ -38,9 +40,10 @@ public interface UserRepository {
     void deleteByUsername(String username);
 
     @Update("""
-            UPDATE FROM users u
+            UPDATE users u
             SET u.image_path = #{imagePath}
-            WHERE u.username = #{username}
+              , u.enabled = #{enabled}
+            WHERE u.id = #{id}
             """)
-    void update(String imagePath, String username);
+    void update(String imagePath, boolean enabled, long id);
 }
