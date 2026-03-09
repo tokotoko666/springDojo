@@ -47,7 +47,7 @@ class UserRestControllerTest {
 
         // ## Assert ##
         actual.andExpect(status().isOk())
-                .andExpect(content().bytes(MOCK_USER_NAME.getBytes()));
+                .andExpect(jsonPath("$.username").value(MOCK_USER_NAME));
     }
 
     @Test
