@@ -326,5 +326,19 @@ public class UploadUserProfileImageIT {
 
         // ## Assert ##
         var actualResponseBody = responseSpec.expectStatus().isOk();
+
+        // GET / users/me
+        var getUserResponseSpec = webTestClient
+                .get().uri("/users/me")
+                .cookie(SESSION_COOKIE_NAME, loginSessionCookie)
+                .exchange();
+
+        getUserResponseSpec
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.id").isNumber()
+                .jsonPath("$.username").isEqualTo(TEST_USERNAME)
+                .jsonPath("$.imagePath").isEqualTo(imagePath)
+                .jsonPath("$.password").doesNotExist();
     }
 }
