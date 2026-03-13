@@ -1,5 +1,6 @@
 package com.example.blog.web.controller.user;
 
+import com.example.blog.security.LoggedInUser;
 import com.example.blog.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,13 +49,18 @@ class UserRestControllerTest {
     @WithMockUser(username = MOCK_USER_NAME)
     public void usersMe_return200() throws Exception {
         // ## Arrange ##
+        var loggedInUser = new LoggedInUser(123L, "test_username1", "test_password1", true);
 
         // ## Act ##
-        var actual = mockMvc.perform(get("/users/me"));
+        var actual = mockMvc.perform(get("/users/me")
+                .with(user(loggedInUser)));
 
         // ## Assert ##
         actual.andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(MOCK_USER_NAME));
+                .andExpect(jsonPath("$.id").value(loggedInUser.getUserId()))
+                .andExpect(jsonPath("$.username").value(loggedInUser.getUsername()))
+                .andExpect(jsonPath("$.imagePath").value("dummy")
+                );
     }
 
     @Test
