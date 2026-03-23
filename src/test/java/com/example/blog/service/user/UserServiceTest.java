@@ -9,6 +9,9 @@ import com.example.blog.repository.user.UserRepository;
 import com.example.blog.security.LoggedInUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -102,4 +105,39 @@ class UserServiceTest {
         assertThat(actual.uploadURL()).isNotNull();
     }
 
+    @Test
+    @DisplayName("delete: 存在するユーザーを削除できること")
+    void delete_success_existingUser() {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        // ## Act ##
+        cut.delete(existingUser1.getUsername());
+
+        // ## Assert ##
+        assertThat(userRepository.selectByUsername(existingUser1.getUsername())).isEmpty();
+        assertThat(userRepository.selectByUsername(existingUser2.getUsername())).contains(existingUser2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "test_username_999")
+    @NullAndEmptySource
+    @DisplayName("delete: Null、空文字、存在しないユーザーを指定しても例外が発生せず処理が終了し、ほかのユーザーの削除もされない")
+    void delete_success_nonExistingUser(String username) {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        // ## Act ##
+        cut.delete(username);
+
+        // ## Assert ##
+        assertThat(userRepository.selectByUsername(existingUser1.getUsername())).contains(existingUser1);
+        assertThat(userRepository.selectByUsername(existingUser2.getUsername())).contains(existingUser2);
+    }
 }
