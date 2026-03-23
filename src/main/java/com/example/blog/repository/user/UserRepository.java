@@ -41,9 +41,10 @@ public interface UserRepository {
 
     @Update("""
             UPDATE users u
-            SET u.image_path = #{imagePath}
+            SET u.password = #{password}
+              , u.image_path = #{imagePath}
               , u.enabled = #{enabled}
             WHERE u.id = #{id}
             """)
-    void update(String imagePath, boolean enabled, long id);
+    void update(UserEntity userEntity);
 }

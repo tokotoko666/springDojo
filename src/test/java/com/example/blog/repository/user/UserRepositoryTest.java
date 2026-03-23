@@ -115,7 +115,7 @@ class UserRepositoryTest {
                 !existingUser1.isEnabled()
         );
         // #Act ##
-        cut.update(userToUpdate.getImagePath(), userToUpdate.isEnabled(), userToUpdate.getId());
+        cut.update(userToUpdate);
 
         // #Assert ##
         assertThat(cut.selectByUsername(existingUser1.getUsername()))
@@ -141,7 +141,7 @@ class UserRepositoryTest {
                 false
         );
         // #Act ##
-        cut.update(nonExistingUser.getImagePath(), nonExistingUser.isEnabled(), nonExistingUser.getId());
+        cut.update(nonExistingUser);
 
         // #Assert ##
         assertThat(cut.selectByUsername(existingUser1.getUsername()))
