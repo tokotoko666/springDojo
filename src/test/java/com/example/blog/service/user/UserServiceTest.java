@@ -7,6 +7,7 @@ import com.example.blog.config.S3Properties;
 import com.example.blog.repository.file.FileRepository;
 import com.example.blog.repository.user.UserRepository;
 import com.example.blog.security.LoggedInUser;
+import com.example.blog.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @MybatisDefaultDataSourceTest
 @EnableConfigurationProperties(S3Properties.class)
@@ -139,5 +141,38 @@ class UserServiceTest {
         // ## Assert ##
         assertThat(userRepository.selectByUsername(existingUser1.getUsername())).contains(existingUser1);
         assertThat(userRepository.selectByUsername(existingUser2.getUsername())).contains(existingUser2);
+    }
+
+    @Test
+    @DisplayName("findByUsername: 存在するユーザーを取得できること")
+    void findByUsername_success() {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        // ## Act ##
+        var actual = cut.findByUsername(existingUser1.getUsername());
+
+        // ## Assert ##
+        assertThat(actual).isEqualTo(existingUser1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "dummy_username")
+    @NullAndEmptySource
+    @DisplayName("findByUsername: Null、空文字、存在しないユーザーを指定した場合、ResourceNotFoundException が発生すること")
+    void findByUsername_throwException_userNotFound(String username) {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        // ## Act ##
+        // ## Assert ##
+        assertThatThrownBy(() -> cut.findByUsername(username))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 }
