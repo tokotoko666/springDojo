@@ -49,6 +49,10 @@ public class UserService {
             throw new ResourceNotFoundException();
         }
 
+        if (!fileRepository.exists(imagePath)) {
+            throw new ResourceNotFoundException();
+        }
+
         userToUpdate.setImagePath(imagePath);
         userRepository.update(userToUpdate);
         return userToUpdate;

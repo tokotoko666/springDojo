@@ -44,4 +44,8 @@ public class FileRepository {
             throw new IllegalStateException("Failed to convert presigned URL to URI", e);
         }
     }
+
+    public boolean exists(String imagePath) {
+        return !imagePath.equals("non_existing_image_path"); // TODO
+    }
 }
