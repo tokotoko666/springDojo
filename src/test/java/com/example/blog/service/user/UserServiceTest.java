@@ -175,4 +175,70 @@ class UserServiceTest {
         assertThatThrownBy(() -> cut.findByUsername(username))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
+
+    @Test
+    @DisplayName("updateProfileImage_success: 存在するユーザーの画像パスを更新できること")
+    void updateProfileImage_success() {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", null, true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", null, true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        var existingUserImagePath = "users/" + existingUser1.getUsername() + "/profile-image";
+
+        // ## Act ##
+        var actual = cut.updateProfileImage(existingUser1.getUsername(), existingUserImagePath);
+
+        // ## Assert ##
+        var expectedUser = new UserEntity(
+                existingUser1.getId(),
+                existingUser1.getUsername(),
+                existingUser1.getPassword(),
+                existingUserImagePath,
+                existingUser1.isEnabled()
+        );
+
+        assertThat(actual).isEqualTo(expectedUser);
+        assertThat(userRepository.selectByUsername(existingUser1.getUsername()))
+                .contains(expectedUser);
+        assertThat(userRepository.selectByUsername(existingUser2.getUsername()))
+                .contains(existingUser2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "non_existing_username")
+    @NullAndEmptySource
+    @DisplayName("updateProfileImage: 存在しないユーザーを指定したとき ResourceNotFoundException が発生すること")
+    void updateProfileImage_throwResourceNotFoundException_userNotFound(String inputUsername) {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", null, true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", null, true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        var existingUserImagePath = "users/" + existingUser1.getUsername() + "/profile-image";
+
+        // ## Act ##
+        // ## Assert ##
+        assertThatThrownBy(() -> cut.updateProfileImage(inputUsername, existingUserImagePath))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "non_existing_image_path")
+    @NullAndEmptySource
+    @DisplayName("updateProfileImage: 存在しない画像パスを指定したとき ResourceNotFoundException が発生すること")
+    void updateProfileImage_throwResourceNotFoundException_invalidImagePath(String inputImagePath) {
+        // ## Arrange ##
+        var existingUser1 = new UserEntity(null, "test_username1", "test_password", null, true);
+        var existingUser2 = new UserEntity(null, "test_username2", "test_password", null, true);
+        userRepository.insert(existingUser1);
+        userRepository.insert(existingUser2);
+
+        // ## Act ##
+        // ## Assert ##
+        assertThatThrownBy(() -> cut.updateProfileImage(existingUser1.getUsername(), inputImagePath))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
 }
